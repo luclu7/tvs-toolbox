@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h1>Trouver une gare par son code TVS</h1>
-    <label style="font-size: 2em;">Code de la gare (3 lettres): <input style="width:2em;font-size:1.5em;" maxlength="3" v-model="codeGare" type="text"></label>
+    <label style="font-size: 2em;">Code de la gare (3 lettres): <input autofocus style="width:2em;font-size:1.5em;" maxlength="3" v-model="codeGare" type="text"></label>
     <p style="font-size: 2em;">{{ explainCode }}</p>
   <div id="osm-map"></div>
     <div style="height: 63vh">
