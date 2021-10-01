@@ -1,17 +1,67 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>Trouver une gare par son code TVS</h1>
+    <label style="font-size: 2em;">Code de la gare (3 lettres): <input style="width:2em;font-size:1.5em;" maxlength="3" v-model="codeGare" type="text"></label>
+    <p style="font-size: 2em;">{{ explainCode }}</p>
+  <div id="osm-map"></div>
+    <div style="height: 63vh">
+
+    <LMap :zoom="zoom" :center="center">
+      <LMarker v-text="truc" :lat-lng="center"></LMarker>
+      <LTileLayer :url="url" :attribution="attribution"></LTileLayer>
+    </LMap>
+</div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+const listeDesGares = require("../utils/gares.json");
+import { LMap, LMarker, LTileLayer } from 'vue2-leaflet';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    LMap,
+    LMarker,
+    LTileLayer
+  },
+  computed: {
+    explainCode: function () {
+      if (this.codeGare.length === 3) {
+        if (listeDesGares[this.codeGare]) {
+          console.log(listeDesGares[this.codeGare])
+          return `Ce code correspond à la gare de ${listeDesGares[this.codeGare].alias_libelle_noncontraint}, ${listeDesGares[this.codeGare].departement_libellemin} (${listeDesGares[this.codeGare].departement_numero})`;
+        } else {
+          return "🤷‍♀️";
+        }
+      } else {
+        return "🤷‍♀️";
+      }
+    }
+  },
+  data() {
+    let codeGare = "";
+    return {
+      codeGare,
+      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      zoom: 16,
+      center: [48.853281, 2.349165],
+      bounds: null,
+      attribution:
+          '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    }
+  },
+  watch: {
+    codeGare: function () {
+      this.codeGare = this.codeGare.toUpperCase();
+
+      if (this.codeGare.length === 3) {
+        if (listeDesGares[this.codeGare]) {
+          console.log(listeDesGares[this.codeGare].wgs_84)
+          this.center = listeDesGares[this.codeGare].wgs_84;
+        }
+      }
+    }
   }
 }
 </script>
