@@ -1,8 +1,13 @@
 import Vue from 'vue'
 import App from './App.vue'
+
 import 'leaflet/dist/leaflet.css';
 import { Icon } from "leaflet";
 
+import Buefy from 'buefy'
+import 'buefy/dist/buefy.css'
+
+Vue.use(Buefy)
 delete Icon.Default.prototype._getIconUrl;
 
 Icon.Default.mergeOptions({
