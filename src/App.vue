@@ -3,10 +3,21 @@
     <h1>Trouver une code TVS par la gare</h1>
     <!--<label style="font-size: 2em;">Code de la gare (3 lettres): <input autofocus style="width:2em;font-size:1.5em;" maxlength="3" v-model="codeGare" type="text"></label>
     -->
+    <b-field label="Gare">
+      <b-autocomplete
+          v-model="nomGare"
+          icon="train"
+          placeholder="Rochefort"
+          :keep-first="true"
+          :open-on-focus="true"
+          :data="filteredDataObj"
+          field="ville"
+          @select="option => selectedStation = option">
+      </b-autocomplete>
+    </b-field>
     <p style="font-size: 2em;">{{ explainCode }}</p>
-  <div id="osm-map"></div>
-
-    <div style="height: 63vh">
+    <br><br><br><br><br><br><br>
+    <div style="height: 50vh">
 
     <LMap :zoom="zoom" :center="center">
       <LMarker :lat-lng="center"></LMarker>
@@ -18,6 +29,7 @@
 
 <script>
 const listeDesGares = require("../utils/gares.json");
+const listeNomDesGares = require("../utils/liste.json");
 import { LMap, LMarker, LTileLayer } from 'vue2-leaflet';
 
 export default {
@@ -29,39 +41,40 @@ export default {
   },
   computed: {
     explainCode: function () {
-      if (this.codeGare.length === 3) {
-        if (listeDesGares[this.codeGare]) {
-          console.log(listeDesGares[this.codeGare])
-          return `Ce code correspond à la gare de ${listeDesGares[this.codeGare].alias_libelle_noncontraint}, ${listeDesGares[this.codeGare].departement_libellemin} (${listeDesGares[this.codeGare].departement_numero})`;
-        } else {
-          return "🤷‍♀️";
-        }
+      if (listeDesGares[this.nomGare]) {
+          return `Le code de ${listeDesGares[this.nomGare].alias_libelle_noncontraint}, ${listeDesGares[this.nomGare].departement_libellemin} (${listeDesGares[this.nomGare].departement_numero}) est ${listeDesGares[this.nomGare].tvs}`;
       } else {
         return "🤷‍♀️";
       }
+    },
+    filteredDataObj() {
+      return this.listeNomDesGares.filter((option) => {
+        return option
+            .toString()
+            .toLowerCase()
+            .indexOf(this.nomGare.toLowerCase()) >= 0
+      })
     }
   },
   data() {
     let codeGare = "";
+    let nomGare = "";
     return {
       codeGare,
+      nomGare,
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       zoom: 16,
       center: [48.853281, 2.349165],
       bounds: null,
       attribution:
           '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      listeNomDesGares
     }
   },
   watch: {
-    codeGare: function () {
-      this.codeGare = this.codeGare.toUpperCase();
-
-      if (this.codeGare.length === 3) {
-        if (listeDesGares[this.codeGare]) {
-          console.log(listeDesGares[this.codeGare].wgs_84)
-          this.center = listeDesGares[this.codeGare].wgs_84;
-        }
+    nomGare: function () {
+        if (listeDesGares[this.nomGare]) {
+          this.center = listeDesGares[this.nomGare].wgs_84;
       }
     }
   }
