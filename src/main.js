@@ -6,6 +6,7 @@ import { Icon } from "leaflet";
 
 import Buefy from 'buefy'
 import 'buefy/dist/buefy.css'
+import router from './router'
 
 Vue.use(Buefy)
 delete Icon.Default.prototype._getIconUrl;
@@ -19,5 +20,6 @@ Icon.Default.mergeOptions({
 Vue.config.productionTip = false
 
 new Vue({
-  render: h => h(App),
+  router,
+  render: h => h(App)
 }).$mount('#app')
