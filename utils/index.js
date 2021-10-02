@@ -1,14 +1,20 @@
 #!/usr/bin/env node
-fs = require('fs');
+const fs = require('fs');
 
 let dict = {};
-const listeDesGares = require("./referentiel-gares-voyageurs.json");
+let listeDesGares = [];
+const dataset = require("./referentiel-gares-voyageurs.json");
 
-for(let key in listeDesGares) {
-  dict[listeDesGares[key].fields.tvs]=listeDesGares[key].fields;
+for(let key in dataset) {
+  if (/[A-Z]{3}/.test(dataset[key].fields.tvs)){
+    console.log(dataset[key].fields.gare_alias_libelle_noncontraint)
+    dict[dataset[key].fields.gare_alias_libelle_noncontraint]=dataset[key].fields;
+    listeDesGares.push(dataset[key].fields.gare_alias_libelle_noncontraint);
+  }
 }
 // test avec saint-leu
-console.log(dict["SLF"])
+console.log(dict["Saint-Leu-la-Forêt"])
 
 const data = JSON.stringify(dict);
 fs.writeFileSync('gares.json', data);
+fs.writeFileSync('liste.json', JSON.stringify(listeDesGares));
